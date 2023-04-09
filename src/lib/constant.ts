@@ -4,6 +4,9 @@ import { z } from "zod";
 type ENV = {
   CHANNEL_ACCESS_TOKEN: string;
   CHANNEL_SECRET: string;
+  DISCORD_TOKEN: string;
+  DISCORD_TARGET_SERVER: number;
+  DISCORD_TARGET_CHANNEL: number;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -27,11 +30,11 @@ class ResponseNotOkError extends Error {
   }
 }
 
-class StoreError extends Error {
-  constructor(reason: string, public status?: number) {
-    super(JSON.stringify({ message: "Store Error", reason }));
+class InvalidRequestError extends Error {
+  constructor(reason: string) {
+    super(JSON.stringify({ message: "InvalidRequestError", reason }));
   }
 }
 
-export { createHono, NetworkError, StoreError, ResponseNotOkError };
+export { createHono, NetworkError, ResponseNotOkError, InvalidRequestError };
 export type { ENV, toZod, valueOf };
