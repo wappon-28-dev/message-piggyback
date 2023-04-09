@@ -53,3 +53,5 @@ webhook.post("/", async (ctx) => {
   );
   return ctx.status(200);
 });
+
+export default webhook;
