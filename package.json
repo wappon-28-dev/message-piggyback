@@ -1,5 +1,5 @@
 {
-  "name": "lapsquash_analyzer",
+  "name": "message-piggyback",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -9,26 +9,28 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettier --write .",
-    "deploy": "wrangler publish src/index.ts"
+    "deploy": "wrangler publish src/index.ts",
+    "tail": "wrangler tail"
   },
   "dependencies": {
+    "hono": "^3.1.0"
+  },
+  "devDependencies": {
     "@aspida/axios": "^1.11.0",
+    "@cloudflare/workers-types": "^4.20221111.1",
     "@hono/zod-validator": "^0.1.2",
     "@line/bot-sdk": "^7.5.2",
     "@tsndr/cloudflare-worker-jwt": "^2.2.1",
     "@types/jsonwebtoken": "^9.0.1",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
     "aspida-mock": "^0.9.0",
     "axios": "^1.3.4",
     "crypto-js": "^4.1.1",
-    "hono": "^3.1.0",
-    "zod": "^3.21.4"
-  },
-  "devDependencies": {
-    "@cloudflare/workers-types": "^4.20221111.1",
-    "@typescript-eslint/eslint-plugin": "latest",
-    "@typescript-eslint/parser": "latest",
+    "discord.js": "^14.9.0",
     "eslint": "latest",
     "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-jest": "latest"
+    "eslint-plugin-jest": "latest",
+    "zod": "^3.21.4"
   }
 }

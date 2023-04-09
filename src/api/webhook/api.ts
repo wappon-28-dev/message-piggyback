@@ -1,15 +1,11 @@
-import { zValidator } from "@hono/zod-validator";
 import {
-  ClientConfig,
-  Client,
   middleware,
-  MiddlewareConfig,
   WebhookEvent,
   TextMessage,
   MessageAPIResponseBase,
 } from "@line/bot-sdk";
-import { getClientConfig, getMiddlewareConfig } from "lib/config";
-import { ENV, ResponseNotOkError, createHono } from "lib/constant";
+import { getMiddlewareConfig } from "lib/config";
+import { ENV, createHono } from "lib/constant";
 
 const webhook = createHono();
 
@@ -22,8 +18,6 @@ const textEventHandler = async (
   env: ENV,
   event: WebhookEvent
 ): Promise<MessageAPIResponseBase | undefined> => {
-  const client = new Client(getClientConfig(env));
-
   if (event.type !== "message" || event.message.type !== "text") {
     return;
   }
@@ -32,26 +26,38 @@ const textEventHandler = async (
   const { text } = event.message;
   const response: TextMessage = {
     type: "text",
-    text: text,
+    text,
   };
-  await client.replyMessage(replyToken, response);
+  await fetch("https://api.line.me/v2/bot/message/reply", {
+    body: JSON.stringify({
+      replyToken: replyToken,
+      messages: [response],
+    }),
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.CHANNEL_ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 webhook.post("/", async (ctx) => {
-  const events: WebhookEvent[] = (await ctx.req.json()) as WebhookEvent[];
+  const data = await ctx.req.json();
+  const events: WebhookEvent[] = (data as any).events;
+
   await Promise.all(
-    events.map(async (event) => {
+    events.map(async (event: WebhookEvent) => {
       try {
         await textEventHandler(ctx.env, event);
       } catch (err: unknown) {
         if (err instanceof Error) {
-          throw new ResponseNotOkError(err.message, err.stack ?? "");
+          console.error(err);
         }
-        return ctx.text("Internal Server Error", 500);
+        return ctx.status(500);
       }
     })
   );
   return ctx.status(200);
 });
 
-export default webhook;
+export { webhook };

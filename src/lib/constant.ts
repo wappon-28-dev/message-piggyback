@@ -13,7 +13,7 @@ type toZod<T extends Record<string, any>> = {
 
 type valueOf<T> = T[keyof T];
 
-const createHono = () => new Hono<{ Bindings: ENV }>();
+const createHono = () => new Hono<{ Bindings: ENV; strict: false }>();
 
 class NetworkError extends Error {
   constructor(reason: string) {
